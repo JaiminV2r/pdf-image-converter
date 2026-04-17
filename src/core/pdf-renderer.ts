@@ -1,7 +1,32 @@
 import { loadMuPdf } from './wasm-loader.js';
+import { InvalidPdfException, PageOutOfRangeException } from '../errors.js';
 import type { RawPixmap } from '../types/index.js';
 
 const DEFAULT_DPI = 150;
+
+/**
+ * Validates that the given buffer starts with the PDF magic bytes (`%PDF`).
+ * Throws `InvalidPdfException` if the check fails.
+ */
+function validatePdfBuffer(data: Buffer | Uint8Array): void {
+  if (!data || data.length < 4) {
+    throw new InvalidPdfException(
+      'Input is not a valid PDF: buffer is empty or too small.'
+    );
+  }
+  // PDF files must begin with the 4-byte magic sequence: %PDF (0x25 0x50 0x44 0x46)
+  if (
+    data[0] !== 0x25 || // %
+    data[1] !== 0x50 || // P
+    data[2] !== 0x44 || // D
+    data[3] !== 0x46    // F
+  ) {
+    throw new InvalidPdfException(
+      'Input is not a valid PDF: file does not begin with the PDF magic bytes (%PDF). ' +
+      'Only PDF files are supported.'
+    );
+  }
+}
 
 /**
  * Renders a single PDF page to raw RGB pixel data.
@@ -15,6 +40,7 @@ export async function renderPage(
   pageIndex: number,
   dpi: number = DEFAULT_DPI
 ): Promise<RawPixmap> {
+  validatePdfBuffer(pdfData);
   const mupdf = await loadMuPdf();
 
   const doc = mupdf.Document.openDocument(pdfData, 'application/pdf');
@@ -23,7 +49,7 @@ export async function renderPage(
     const totalPages: number = doc.countPages();
 
     if (pageIndex < 0 || pageIndex >= totalPages) {
-      throw new RangeError(
+      throw new PageOutOfRangeException(
         `Page index ${pageIndex} is out of range. ` +
         `Document has ${totalPages} page(s) (0-indexed).`
       );
@@ -84,6 +110,7 @@ export async function renderPage(
  * Returns the total number of pages in a PDF.
  */
 export async function getPageCount(pdfData: Buffer | Uint8Array): Promise<number> {
+  validatePdfBuffer(pdfData);
   const mupdf = await loadMuPdf();
   const doc = mupdf.Document.openDocument(pdfData, 'application/pdf');
   try {

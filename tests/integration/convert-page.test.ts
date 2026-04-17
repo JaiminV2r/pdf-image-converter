@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { PdfConverter } from '../../src/nodejs/index.js';
+import { PdfConverter, InvalidPdfException, UnsupportedFormatException, PageOutOfRangeException } from '../../src/nodejs/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SAMPLE_PDF = path.join(__dirname, '../fixtures/sample.pdf');
@@ -60,16 +60,16 @@ describe('PdfConverter — convertPage', () => {
     expect(result.buffer.toString('ascii', 0, 2)).toBe('P6');
   });
 
-  it('throws RangeError for page 0', async () => {
+  it('throws PageOutOfRangeException for page 0', async () => {
     const converter = new PdfConverter();
     const pdf = loadSamplePdf();
-    await expect(converter.convertPage(pdf, 0)).rejects.toThrow(RangeError);
+    await expect(converter.convertPage(pdf, 0)).rejects.toThrow(PageOutOfRangeException);
   });
 
-  it('throws for page out of range', async () => {
+  it('throws PageOutOfRangeException for page out of range', async () => {
     const converter = new PdfConverter();
     const pdf = loadSamplePdf();
-    await expect(converter.convertPage(pdf, 999)).rejects.toThrow();
+    await expect(converter.convertPage(pdf, 999)).rejects.toThrow(PageOutOfRangeException);
   });
 
   it('respects DPI setting', async () => {
@@ -119,5 +119,54 @@ describe('PdfConverter — constructor defaults', () => {
     const pdf = loadSamplePdf();
     const result = await converter.convertPage(pdf, 1);
     expect(result.format).toBe('bmp');
+  });
+});
+
+describe('PdfConverter — input validation', () => {
+  const converter = new PdfConverter();
+
+  it('throws InvalidPdfException for a non-PDF buffer passed to convertPage', async () => {
+    const notAPdf = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]); // JPEG magic bytes
+    const err = await converter.convertPage(notAPdf, 1).catch(e => e);
+    expect(err).toBeInstanceOf(InvalidPdfException);
+    expect(err.name).toBe('InvalidPdfException');
+    expect(err.errorCode).toBe('INVALID_PDF');
+    expect(err.message).toMatch(/%PDF/);
+  });
+
+  it('throws InvalidPdfException for an empty buffer', async () => {
+    const err = await converter.convertPage(Buffer.alloc(0), 1).catch(e => e);
+    expect(err).toBeInstanceOf(InvalidPdfException);
+    expect(err.errorCode).toBe('INVALID_PDF');
+  });
+
+  it('throws InvalidPdfException for a non-PDF buffer passed to convertAll', async () => {
+    const notAPdf = Buffer.from('this is not a pdf');
+    const err = await converter.convertAll(notAPdf).catch(e => e);
+    expect(err).toBeInstanceOf(InvalidPdfException);
+    expect(err.errorCode).toBe('INVALID_PDF');
+  });
+
+  it('throws InvalidPdfException for a non-PDF buffer passed to getPageCount', async () => {
+    const notAPdf = Buffer.from([0x89, 0x50, 0x4e, 0x47]); // PNG magic bytes
+    const err = await converter.getPageCount(notAPdf).catch(e => e);
+    expect(err).toBeInstanceOf(InvalidPdfException);
+    expect(err.errorCode).toBe('INVALID_PDF');
+  });
+
+  it('throws UnsupportedFormatException for an unsupported image format', async () => {
+    const pdf = loadSamplePdf();
+    const err = await converter.convertPage(pdf, 1, { format: 'webp' }).catch(e => e);
+    expect(err).toBeInstanceOf(UnsupportedFormatException);
+    expect(err.name).toBe('UnsupportedFormatException');
+    expect(err.errorCode).toBe('UNSUPPORTED_FORMAT');
+    expect(err.message).toMatch(/Unsupported image format/);
+  });
+
+  it('throws UnsupportedFormatException for an unsupported format in convertAll', async () => {
+    const pdf = loadSamplePdf();
+    const err = await converter.convertAll(pdf, { format: 'tiff' }).catch(e => e);
+    expect(err).toBeInstanceOf(UnsupportedFormatException);
+    expect(err.errorCode).toBe('UNSUPPORTED_FORMAT');
   });
 });

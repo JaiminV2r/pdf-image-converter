@@ -1,5 +1,6 @@
 import { renderPage, getPageCount } from '../core/pdf-renderer.js';
 import { encodePixmap, supportedFormats } from '../encoders/encoder-factory.js';
+import { PageOutOfRangeException, UnsupportedFormatException } from '../errors.js';
 import type {
   ConvertOptions,
   ConversionResult,
@@ -14,6 +15,12 @@ export type {
   PdfImageModuleOptions,
   PdfImageModuleAsyncOptions,
 } from '../types/index.js';
+export {
+  InvalidPdfException,
+  UnsupportedFormatException,
+  PageOutOfRangeException,
+} from '../errors.js';
+export type { ErrorCode } from '../errors.js';
 
 export { supportedFormats } from '../encoders/encoder-factory.js';
 
@@ -81,12 +88,19 @@ export class PdfConverter {
     options: ConvertOptions = {}
   ): Promise<ConversionResult> {
     if (page < 1) {
-      throw new RangeError(`Page number must be >= 1, got ${page}.`);
+      throw new PageOutOfRangeException(`Page number must be >= 1, got ${page}.`);
     }
     const opts = { ...this.defaults, ...options };
+    const format = (opts.format ?? 'png').toLowerCase();
+    if (!supportedFormats().includes(format)) {
+      throw new UnsupportedFormatException(
+        `Unsupported image format: "${format}". ` +
+        `Supported formats: ${supportedFormats().join(', ')}.`
+      );
+    }
     const pixmap = await renderPage(pdf, page - 1, opts.dpi); // convert to 0-indexed
-    const { buffer, format } = await encodePixmap(pixmap, opts);
-    return { buffer, size: buffer.length, page, width: pixmap.width, height: pixmap.height, format };
+    const { buffer, format: outFormat } = await encodePixmap(pixmap, opts);
+    return { buffer, size: buffer.length, page, width: pixmap.width, height: pixmap.height, format: outFormat };
   }
 
   /**
