@@ -2,6 +2,8 @@ import { pngEncoder } from './png-encoder.js';
 import { jpegEncoder } from './jpeg-encoder.js';
 import { bmpEncoder } from './bmp-encoder.js';
 import { ppmEncoder } from './ppm-encoder.js';
+import { tiffEncoder } from './tiff-encoder.js';
+import { icoEncoder } from './ico-encoder.js';
 import type { RawPixmap, ConvertOptions, ImageEncoder, ImageFormat } from '../types/index.js';
 
 const registry = new Map<string, ImageEncoder>([
@@ -10,6 +12,9 @@ const registry = new Map<string, ImageEncoder>([
   ['jpg',  jpegEncoder], // alias
   ['bmp',  bmpEncoder],
   ['ppm',  ppmEncoder],
+  ['tiff', tiffEncoder],
+  ['tif',  tiffEncoder], // alias
+  ['ico',  icoEncoder],
 ]);
 
 /**

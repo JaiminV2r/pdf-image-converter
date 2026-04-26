@@ -165,7 +165,7 @@ describe('PdfConverter — input validation', () => {
 
   it('throws UnsupportedFormatException for an unsupported format in convertAll', async () => {
     const pdf = loadSamplePdf();
-    const err = await converter.convertAll(pdf, { format: 'tiff' }).catch(e => e);
+    const err = await converter.convertAll(pdf, { format: 'webp' }).catch(e => e);
     expect(err).toBeInstanceOf(UnsupportedFormatException);
     expect(err.errorCode).toBe('UNSUPPORTED_FORMAT');
   });

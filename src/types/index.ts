@@ -1,4 +1,4 @@
-export type BuiltinFormat = 'png' | 'jpeg' | 'bmp' | 'ppm';
+export type BuiltinFormat = 'png' | 'jpeg' | 'bmp' | 'ppm' | 'tiff' | 'ico';
 export type ImageFormat = BuiltinFormat | string; // extensible for custom encoders
 
 export interface ConvertOptions {
