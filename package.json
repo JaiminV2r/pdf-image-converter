@@ -16,6 +16,9 @@
     "url": "https://github.com/JaiminV2r/pdf-image-converter/issues"
   },
   "homepage": "https://github.com/JaiminV2r/pdf-image-converter#readme",
+  "bin": {
+    "pdf-image-converter": "./dist/cli/index.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/types/nodejs/index.d.ts",

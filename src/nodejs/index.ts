@@ -180,12 +180,12 @@ export class PdfConverter {
   /**
    * Returns the list of image format names that can be used in `ConvertOptions.format`.
    *
-   * Includes both built-in formats (e.g. `'png'`, `'jpeg'`, `'webp'`) and any
+   * Includes both built-in formats (e.g. `'png'`, `'jpeg'`) and any
    * custom formats registered at runtime via the encoder registry.
    * Call this to validate a user-supplied format string before passing it to a
    * convert method.
    *
-   * @returns An array of lowercase format name strings (e.g. `['png', 'jpeg', 'webp']`).
+   * @returns An array of lowercase format name strings (e.g. `['png', 'jpeg']`).
    *
    * @example
    * ```ts
