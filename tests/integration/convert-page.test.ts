@@ -156,7 +156,7 @@ describe('PdfConverter — input validation', () => {
 
   it('throws UnsupportedFormatException for an unsupported image format', async () => {
     const pdf = loadSamplePdf();
-    const err = await converter.convertPage(pdf, 1, { format: 'webp' }).catch(e => e);
+    const err = await converter.convertPage(pdf, 1, { format: 'avif' }).catch(e => e);
     expect(err).toBeInstanceOf(UnsupportedFormatException);
     expect(err.name).toBe('UnsupportedFormatException');
     expect(err.errorCode).toBe('UNSUPPORTED_FORMAT');
@@ -165,7 +165,7 @@ describe('PdfConverter — input validation', () => {
 
   it('throws UnsupportedFormatException for an unsupported format in convertAll', async () => {
     const pdf = loadSamplePdf();
-    const err = await converter.convertAll(pdf, { format: 'webp' }).catch(e => e);
+    const err = await converter.convertAll(pdf, { format: 'avif' }).catch(e => e);
     expect(err).toBeInstanceOf(UnsupportedFormatException);
     expect(err.errorCode).toBe('UNSUPPORTED_FORMAT');
   });

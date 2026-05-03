@@ -46,4 +46,15 @@ export default defineConfig([
     dts: { only: true },
     external: ['@nestjs/common', '@nestjs/core'],
   },
+  // CLI build (ESM with shebang, standalone)
+  {
+    entry: { 'cli/index': 'src/cli/index.ts' },
+    format: ['esm'],
+    outDir: 'dist',
+    dts: false,
+    sourcemap: false,
+    splitting: false,
+    external,
+    banner: { js: '#!/usr/bin/env node' },
+  },
 ]);

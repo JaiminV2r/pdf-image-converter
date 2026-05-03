@@ -26,10 +26,7 @@ Stop dealing with heavy tools like ImageMagick or Ghostscript.
 
 ## 🆕 What's New
 
-### 🎉 New in this version
-
-- 🆕 **ICO support** — generate icons directly from PDFs
-- 🆕 **TIFF support** — high-quality image output for professional workflows
+- 💻 **Powerful CLI** — Convert PDFs directly from your terminal using `npx pdf-image-converter`
 
 ---
 
@@ -37,13 +34,14 @@ Stop dealing with heavy tools like ImageMagick or Ghostscript.
 
 - ⚡ **Blazing Fast** — Powered by WASM for high performance
 - 📦 **Zero Dependencies** — No external binaries required
+- 💻 **Powerful CLI** — Convert PDFs directly from your terminal
 - 🖼 **Multiple Formats Supported**:
   - PNG
   - JPEG
   - BMP
   - PPM
-  - 🆕 **ICO**
-  - 🆕 **TIFF**
+  - ICO
+  - TIFF
 
 - 🧩 **Flexible API** — Convert single, multiple, or all pages
 - 🦅 **NestJS Ready** — First-class integration
@@ -181,6 +179,51 @@ export class AppService {
 | quality | number | 1–100 (JPEG/PNG compression)   |
 
 ---
+
+## 💻 CLI Usage
+
+The package includes a powerful command-line interface to convert PDFs without writing any code.
+
+### Basic Usage
+
+```bash
+npx pdf-image-converter document.pdf
+```
+
+### Options
+
+| Option | Short | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `--output` | `-o` | Output directory or file path | `.` |
+| `--format` | `-f` | Image format: `png`, `jpeg`, `bmp`, `ppm`, `tiff`, `ico` | `png` |
+| `--dpi` | `-d` | Rendering resolution (DPI) | `150` |
+| `--quality` | `-q` | Encoding quality (1-100) for JPEG | `100` |
+| `--page` | `-p` | Convert a specific page (1-indexed) | |
+| `--pages` | | Range (`1-5`) or comma-separated (`1,3,5`) | All |
+| `--help` | `-h` | Show help message | |
+| `--version` | `-V` | Show version number | |
+
+### Examples
+
+**Convert all pages to JPEG with 300 DPI:**
+```bash
+npx pdf-image-converter document.pdf --format jpeg --dpi 300
+```
+
+**Convert a specific page to a specific file:**
+```bash
+npx pdf-image-converter document.pdf --page 1 --output cover.png
+```
+
+**Convert a range of pages to a directory:**
+```bash
+npx pdf-image-converter document.pdf --pages 1-5 --output ./images
+```
+
+**Convert specific pages (quoted for PowerShell compatibility):**
+```bash
+npx pdf-image-converter document.pdf --pages "1,3,5" --quality 90
+```
 
 ## 💡 Use Cases
 

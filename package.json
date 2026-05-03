@@ -1,6 +1,6 @@
 {
   "name": "pdf-image-converter",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Convert PDF to images in Node.js (PNG, JPEG, BMP, PPM, ICO, TIFF). Fast, zero-dependency, TypeScript-first with NestJS support.",
   "license": "MIT",
   "type": "module",
@@ -16,6 +16,9 @@
     "url": "https://github.com/JaiminV2r/pdf-image-converter/issues"
   },
   "homepage": "https://github.com/JaiminV2r/pdf-image-converter#readme",
+  "bin": {
+    "pdf-image-converter": "./dist/cli/index.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/types/nodejs/index.d.ts",

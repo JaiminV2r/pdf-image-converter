@@ -24,7 +24,7 @@ const PDF_ERROR_CODES = new Set<string>([
  * `PageOutOfRangeException` and re-throws them as NestJS `BadRequestException`,
  * giving the familiar terminal log format:
  * ```
- * BadRequestException: Unsupported image format: "webp" ...
+ * BadRequestException: Unsupported image format: "gif" ...
  * {
  *   response: { statusCode: 400, error: 'Bad Request', message: '...', errorCode: 'UNSUPPORTED_FORMAT' },
  *   status: 400
