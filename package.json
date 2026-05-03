@@ -8,6 +8,10 @@
     "name": "Jaimin Vaddoriya",
     "url": "https://github.com/JaiminV2r"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/JaiminV2r"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/JaiminV2r/pdf-image-converter.git"
